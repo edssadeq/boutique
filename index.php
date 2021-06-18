@@ -50,6 +50,6 @@
 
 
 <?php 
-	print_r($_SESSION['cart_prods']);
+	//print_r($_SESSION['cart_prods']);
 	require_once("./partials/footer_part.php");
 ?>

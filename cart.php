@@ -16,8 +16,8 @@
       //if(in_array(needle, haystack))
 
       if(isset($_SESSION['username'])){
-        $_SESSION['cart_prods'];
-        if(isset($_SESSION['cart_prods']) && !is_product_in_cart($_SESSION['cart_prods'], $_POST['prod_id'])){
+        // $_SESSION['cart_prods'];
+        if(!isset($_SESSION['cart_prods']) || (isset($_SESSION['cart_prods']) && !is_product_in_cart($_SESSION['cart_prods'], $_POST['prod_id']))){
           $_SESSION['cart_prods'][] = [ 'prod_id'=>$_POST['prod_id'],
                                       'prod_name'=>$_POST['prod_name'],
                                       'prod_price'=>$_POST['prod_price'],
@@ -67,7 +67,7 @@
         array_splice($_SESSION['cart_prods'],  $item_index, 1); //delete item (start index, range)
         for($i=0;$i<count($_SESSION['cart_prods']);$i++)
         { 
-          $total_payment += (floatval($_SESSION['cart_prods'][$i]['prod_price']) * floatval($_SESSION['cart_prods'][$i]['prod_quantity']) + floatval($_SESSION['cart_prods'][$i]['prod_shipping']));
+          //$total_payment += (floatval($_SESSION['cart_prods'][$i]['prod_price']) * floatval($_SESSION['cart_prods'][$i]['prod_quantity']) + floatval($_SESSION['cart_prods'][$i]['prod_shipping']));
 
           echo renderListItem($i);
         }
