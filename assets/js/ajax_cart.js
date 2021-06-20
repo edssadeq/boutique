@@ -1,6 +1,8 @@
+
 var mycart_list = document.getElementById("mycart_list");
 
 $(document).ready(function(){
+  console.log("hello");
   mycart_list = document.getElementById("mycart_list");
 		//get cart items count
       $.ajax({
@@ -19,7 +21,7 @@ $(document).ready(function(){
       });
 
     });
-	
+
 	//add to cart
     function cart(prod_id_in)
     {
@@ -45,7 +47,7 @@ $(document).ready(function(){
           document.getElementById("total_items").textContent=response;
         }
       });
-	
+
     }
 
     $( "#cart_button" ).on( "click", function() {
@@ -62,26 +64,9 @@ $(document).ready(function(){
         }
        });
     });
-/*
-    $(".btn_delete_item").on("click", function(){
-      var item_index = $(this).attr("data-index");
-      console.log("id :"+item_index);
-      //var item_index = e.target.getAttribute("data-index");
-      if(item_index>=0){
-        $.ajax({
-          type:'post',
-          url:'cart.php',
-          data:{
-            delete_item:item_index
-          },
-          success:function(response) {
-            mycart_list.innerHTML=response;
-            //$("#mycart").slideToggle();
-          }
-       });
-      }
-    });
-*/
+
+
+
     document.addEventListener('click', (e)=>{
       if(e.target.matches(".btn_delete_item")){
         var item_index = e.target.getAttribute("data-index");
@@ -114,6 +99,46 @@ $(document).ready(function(){
           });
 
       }
+
+      //btn_edit_item
+      if(e.target.matches(".btn_edit_item")){
+        var item_index = e.target.getAttribute("data-index");
+        var newQuantity = document.getElementById(`prod_${item_index}_quantity`).value;  //prod_".$i."_quantity
+        newQuantity = newQuantity > 0 ? newQuantity : 1;
+        //console.log(newQuantity + "=== " + item_index);
+          $.ajax({
+            type:'post',
+            url:'cart.php',
+            data:{
+              edit_item: item_index,
+              newQuantity: newQuantity
+            },
+            success:function(response) {
+              mycart_list.innerHTML= response.length > 0 ? response : "Your cart is empty" ;
+              //$("#mycart").slideToggle();
+
+            }
+         });
+
+          $.ajax({
+            type:'post',
+            url:'cart.php',
+            data:{
+              total_cart_items:"totalitems"
+            },
+            success:function(response) {
+              //  if(response.length > 3){
+              //   document.getElementById("total_items").textContent=0;
+              // }
+                document.getElementById("total_items").textContent=response;
+              //console.log("total_cart_items : "+response);
+            }
+          });
+
+      }
+
+      //delete all items
+
       if( e.target.matches("#delete_all_btn")){
           $.ajax({
             type:'post',
@@ -132,27 +157,30 @@ $(document).ready(function(){
           });
 
       }
-      
-    })
-    /*
-    function delete_item(e){
-      //var item_index = $(this).attr("data-index");
-      var item_index = e.target.getAttribute("data-index");
-      if(item_index>0){
+
+      //order_btn
+      if(e.target.matches("#order_btn")){
         $.ajax({
-        type:'post',
-        url:'cart.php',
-        data:{
-          delete_item:item_index
-        },
-        success:function(response) {
-          mycart_list.innerHTML=response;
-          //$("#mycart").slideToggle();
-        }
-       });
+            type:'post',
+            url:'cart.php',
+            data:{
+              make_order:"order"
+            },
+            success:function(response) {
+              document.getElementById("total_items").textContent = response;
+              if(response == 0){
+                mycart_list.innerHTML = "<div class='alert alert-success' role='alert'> Order added successfuly, thank you! </div>";
+              }
+              else{
+                mycart_list.innerHTML += "<div class='alert alert-danger' role='alert'> Order failed, try again! </div>";
+              }
+            }
+          });
       }
-    }
-  */
+
+    })
+
+    
     /**
 
     The first function cart(id) when user clicks on any item this function calls gets the id of that item create a ajax request and send the data to store_items.php to store items.

@@ -54,7 +54,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST["email"]) && isset($_POS
     // Check input errors before inserting in database
     if(empty($email_err) && empty($password_err) && empty($confirm_password_err) && empty($singin_err)){
         // Prepare an insert statement
-        $sql_insert = "INSERT INTO `client`(`USERNAME`, `PASSWORD`) VALUES (:email,:password)";
+         $sql_insert = "INSERT INTO `client`(`USERNAME`, `PASSWORD`) VALUES (:email,:password)";
          $insert_client = $pdo_conn->prepare($sql_insert);
          $insert_client-> bindParam(':email', $email, PDO::PARAM_STR);
          $insert_client-> bindParam(':password', $password, PDO::PARAM_STR);

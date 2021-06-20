@@ -79,6 +79,29 @@
       }
     }
 
+    //edit item 
+    //edit_item
+    if(isset($_POST['edit_item']) && isset($_SESSION['cart_prods']))
+    {
+      if(isset($_SESSION['username'])){
+        $item_index = $_POST['edit_item']; 
+        $_SESSION["cart_prods"][$item_index]['prod_quantity'] = $_POST['newQuantity'] > 0 ? $_POST['newQuantity']: 1;
+
+        for($i=0;$i<count($_SESSION['cart_prods']);$i++)
+        { 
+          //$total_payment += (floatval($_SESSION['cart_prods'][$i]['prod_price']) * floatval($_SESSION['cart_prods'][$i]['prod_quantity']) + floatval($_SESSION['cart_prods'][$i]['prod_shipping']));
+
+          echo renderListItem($i);
+        }
+
+        exit(); 
+      }
+      else{
+        header("Location:login.php");
+      }
+    }
+
+
     // $_SESSION['user_total_payment'] = $total_payment;
     
     //empty cart
@@ -97,6 +120,36 @@
       }
     }
     
+    //make_order
+    if(isset($_POST['make_order'])){
+      if(isset($_SESSION['username'])){
+        if(isset($_SESSION['cart_prods'])){
+          //add order to database 
+          $user_id = $_SESSION['userId'];
+          foreach($_SESSION['cart_prods'] as $product){
+            /**-----------**/
+             $sql_insert = "INSERT INTO `commande`(`SKU`, `ID_CLIENT`, `QTE`) VALUES (:sku, :id_client, :qte)";
+             $insert_order = $pdo_conn->prepare($sql_insert);
+             $insert_order-> bindParam(':sku', $product['prod_id'], PDO::PARAM_STR);
+             $insert_order-> bindParam(':id_client', $user_id, PDO::PARAM_INT);
+             $insert_order-> bindParam(':qte', $product['prod_quantity'], PDO::PARAM_INT);
+             $res = $insert_order->execute();
+             $lastInsertId = $pdo_conn->lastInsertId();
+             if($res){
+              //vider la cart 
+                $_SESSION['cart_prods']=[];
+             }
+             echo count($_SESSION['cart_prods']);
+          }
+          
+        }
+        
+        exit(); 
+      }
+      else{
+        header("Location:login.php");
+      }
+    }
 
     function renderListItem($i){
       $total = floatval($_SESSION['cart_prods'][$i]['prod_price']) * floatval($_SESSION['cart_prods'][$i]['prod_quantity']) + floatval($_SESSION['cart_prods'][$i]['prod_shipping']);
@@ -107,9 +160,17 @@
             <span class='badge bg-light text-dark'>Price: $".$_SESSION['cart_prods'][$i]['prod_price']."</span>
             <span class='badge bg-light text-dark'>Quantity: ".$_SESSION['cart_prods'][$i]['prod_quantity']."</span>
             <span class='badge bg-light text-dark'>Shipping: $".$_SESSION['cart_prods'][$i]['prod_shipping']."</span>
-            <div class='row mt-1'>
-              <div class='col'>
-               <button type='button' class='btn btn-outline-danger btn-sm btn_delete_item' data-index='".$i."' ><span class='badge bg-danger '><i class='fas fa-minus'></i></span> Delete item</button>
+            <div class='row mt-2'>
+              <div class='col-4'>
+               <button type='button' class='btn btn-outline-danger btn-sm btn_delete_item' data-index='".$i."' ><span class='badge bg-danger '><i class='fas fa-minus'></i></span> Delete
+               </button>
+              </div>
+              <div class='col-4'>
+                <input type='number' style='width:100%;' id='prod_".$i."_quantity' value='".$_SESSION['cart_prods'][$i]['prod_quantity']."'/>
+              </div>
+              <div class='col-4'>
+               <button type='button' class='btn btn-outline-primary btn-sm btn_edit_item' data-editBtn data-index='".$i."' ><span class='badge bg-primary'><i class='fas fa-edit'></i></span> Edit
+               </button>
               </div>
             </div>
           </div>

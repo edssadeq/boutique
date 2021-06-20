@@ -25,7 +25,7 @@
 				      <div class='modal-footer'>
 				        <button type='button' class='btn btn-secondary' data-bs-dismiss='modal'>Close</button>
 				        <button type='button' class='btn btn-danger' id="delete_all_btn" >Delete all</button>
-				        <a href="order.php"><button type='button' class='btn btn-warning text-dark'>Order</button></a>
+				        <button type='button' class='btn btn-warning text-dark' id="order_btn">Order</button>
 				      </div>
 				    </div>
 				  </div>
@@ -34,6 +34,7 @@
 		</div>
 	</div>
 	<div class="row mt-5">
+		<div class="col-12" id="sucess_alert">  </div>
 		<aside class="col-3">
 			<?php require_once("./categories.php"); ?>
 		</aside>
